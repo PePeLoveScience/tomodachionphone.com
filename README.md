@@ -1,2 +1,0 @@
-# tomodachionphone.com
-tomo
