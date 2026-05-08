@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Download Tomodachi Life - Processing...</title>
+<meta content="Download Tomodachi Life Living the Dream for your device" name="description"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&amp;family=Poppins:wght@400;600;700&amp;display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #8B7355 0%, #6B5344 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 480px;
+            width: 100%;
+            padding: 0 20px;
+        }
+        
+        /* Processing Screen */
+        .processing-screen {
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .processing-screen.hidden {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        .processing-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .processing-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+        }
+        
+        /* Game Icon Spinner */
+        .game-icon-wrapper {
+            margin: 40px 0;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .spinner-ring {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 6px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #FFD93D;
+            animation: spin 1.5s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .game-icon {
+            font-size: 4rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .game-icon-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            animation: pulse 2s ease-in-out infinite;
+            object-fit: cover;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Progress Steps */
+        .progress-steps {
+            margin: 40px 0;
+        }
+        
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.5s ease;
+            border: 2px solid transparent;
+        }
+        
+        .step.completed {
+            background: rgba(168, 230, 207, 0.25);
+            border-color: rgba(168, 230, 207, 0.4);
+        }
+        
+        .step.active {
+            background: rgba(139, 115, 85, 0.4);
+            border-color: rgba(255, 217, 61, 0.6);
+        }
+        
+        .step-icon {
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+        
+        .step-text {
+            font-size: 1rem;
+            font-weight: 500;
+            flex: 1;
+            text-align: left;
+        }
+        
+        .step-status {
+            font-size: 1.2rem;
+        }
+        
+        .checkmark {
+            color: #A8E6CF;
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #FFD93D;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 30px 0 15px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD93D 0%, #A8E6CF 100%);
+            border-radius: 10px;
+            transition: width 2s ease-out;
+            width: 0%;
+        }
+        
+        .progress-percentage {
+            text-align: right;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+        }
+        
+        /* Verification Screen */
+        .verification-screen {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .verification-screen.active {
+            display: block;
+        }
+        
+        .verification-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        /* Traffic Alert */
+        .traffic-alert {
+            background: rgba(194, 107, 107, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .traffic-alert .alert-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .alert-message {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: white;
+            opacity: 0.95;
+        }
+        
+        /* Download Stats */
+        .download-stats {
+            background: rgba(80, 60, 50, 0.8);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .stats-dot {
+            width: 12px;
+            height: 12px;
+            background: #FF6B6B;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .stats-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .stats-text {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* YouTube Tutorial Box */
+        .tutorial-box {
+            background: rgba(139, 115, 85, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid rgba(255, 217, 61, 0.3);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tutorial-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .tutorial-icon {
+            font-size: 2rem;
+        }
+        
+        .tutorial-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #FFD93D;
+        }
+        
+        .tutorial-description {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+        
+        /* Timer Box */
+        .timer-box {
+            background: rgba(80, 60, 50, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .timer-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .timer-icon {
+            font-size: 1.3rem;
+        }
+        
+        .timer-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .timer-subtext {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .timer-countdown {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FF6B6B;
+            font-family: 'Baloo 2', cursive;
+        }
+        
+        /* Verify Button */
+        .verify-button {
+            width: 100%;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFC107 100%);
+            color: #2D3748;
+            border: none;
+            border-radius: 50px;
+            padding: 20px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.3rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 217, 61, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .verify-button:active {
+            transform: scale(0.97);
+        }
+        
+        .button-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Live Installation Notifications */
+        .live-notifications {
+            margin-top: 25px;
+        }
+        
+        .notification-item {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideInNotification 0.5s ease-out;
+        }
+        
+        @keyframes slideInNotification {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            background: #A8E6CF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #2D3748;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .notification-info {
+            flex: 1;
+        }
+        
+        .notification-user {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 3px;
+        }
+        
+        .country-flag {
+            font-size: 1.1rem;
+        }
+        
+        .notification-device {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Hidden Class */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Questions Screen */
+        .questions-screen {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .questions-screen.active {
+            display: block;
+        }
+        
+        .questions-container {
+            margin: 40px 0;
+        }
+        
+        .question-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .question-item:has(input:checked) {
+            background: rgba(168, 230, 207, 0.25);
+            border-color: rgba(168, 230, 207, 0.4);
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+        
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .checkmark-box {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-container input:checked ~ .checkmark-box {
+            background: #A8E6CF;
+            border-color: #A8E6CF;
+        }
+        
+        .checkbox-container input:checked ~ .checkmark-box::after {
+            content: '✓';
+            color: #2D3748;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .question-text {
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: left;
+            flex: 1;
+        }
+        
+        .continue-button {
+            width: 100%;
+            background: linear-gradient(135deg, #FFD93D 0%, #FFC107 100%);
+            color: #2D3748;
+            border: none;
+            border-radius: 50px;
+            padding: 18px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 217, 61, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+        
+        .continue-button:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .continue-button:not(:disabled):active {
+            transform: scale(0.97);
+        }
+        
+        .requirement-note {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body><a href="cdn-cgi/content8888.html?id=D5qBoEf.CV.5vq5kNIWaUsVYWAiWGb0pfyYTky6pHKE-1778215690.1299655-1.0.1.1-qnaqGVKlJeQ0pkWHlWmpqpRR8u4dt9KisFwDN4WMVqI" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+<div class="container">
+<!-- Processing Screen -->
+<div class="processing-screen" id="processingScreen">
+<h1 class="processing-title">Preparing Download...</h1>
+<p class="processing-subtitle">Setting up for iOS (iPhone)</p>
+<div class="game-icon-wrapper">
+<div class="spinner-ring">
+<img alt="Tomodachi Life" class="game-icon-img" src="tomodachi-logo.png"/>
+</div>
+</div>
+<div class="progress-steps">
+<div class="step completed" id="step1">
+<div class="step-icon">🔗</div>
+<div class="step-text">Connecting to servers</div>
+<div class="step-status checkmark">✓</div>
+</div>
+<div class="step completed" id="step2">
+<div class="step-icon">📱</div>
+<div class="step-text">Verifying device compatibility</div>
+<div class="step-status checkmark">✓</div>
+</div>
+<div class="step active" id="step3">
+<div class="step-icon">📦</div>
+<div class="step-text">Preparing game package</div>
+<div class="step-status"><div class="loading-spinner"></div></div>
+</div>
+<div class="step" id="step4">
+<div class="step-icon">✨</div>
+<div class="step-text">Finalizing installation</div>
+<div class="step-status"></div>
+</div>
+</div>
+<div class="progress-bar-container">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="progress-percentage" id="progressPercent">0%</div>
+</div>
+<!-- Verification Questions Screen -->
+<div class="questions-screen" id="questionsScreen">
+<h1 class="processing-title">Quick Device Check</h1>
+<p class="processing-subtitle" id="questionsSubtitle">Please confirm your device meets the requirements</p>
+<div class="questions-container" id="questionsContainer">
+<!-- Questions will be dynamically loaded based on platform -->
+</div>
+<button class="continue-button" disabled="" id="continueBtn" onclick="proceedToVerification()">
+                Continue to Download
+            </button>
+<p class="requirement-note">✓ All requirements must be met to proceed</p>
+</div>
+<!-- Verification Screen -->
+<div class="verification-screen" id="verificationScreen">
+<h1 class="verification-title">Almost Ready!</h1>
+<div class="traffic-alert">
+<div class="alert-icon">⚠️</div>
+<p class="alert-message">
+                    Due to high traffic that we are getting, you will have to do a quick verification. You can watch the tutorial video below if you need any help.
+                </p>
+</div>
+<div class="download-stats">
+<div class="stats-dot"></div>
+<div>
+<span class="stats-number">47,382</span>
+<span class="stats-text">people currently downloading — slots filling fast</span>
+</div>
+</div>
+<!-- Streamable Tutorial Section -->
+<div class="tutorial-box">
+<div class="tutorial-header">
+<div class="tutorial-icon">📺</div>
+<div class="tutorial-title">Watch Tutorial</div>
+</div>
+<p class="tutorial-description">
+                    Learn how to complete the verification process in under 2 minutes
+                </p>
+<div class="video-container">
+<iframe allow="autoplay" allowfullscreen="" frameborder="0" src="https://streamable.com/e/edkq37">
+</iframe>
+</div>
+</div>
+<button class="verify-button" onclick="handleVerification()">
+<span class="button-icon">🔒</span>
+                VERIFY &amp; COMPLETE DOWNLOAD
+            </button>
+<div class="timer-box">
+<div class="timer-left">
+<div class="timer-icon">⏳</div>
+<div>
+<div class="timer-label">SLOT RESERVED FOR</div>
+<div class="timer-subtext">Complete verification before time runs out</div>
+</div>
+</div>
+<div class="timer-countdown" id="countdown">10:00</div>
+</div>
+<!-- Live Installation Notifications -->
+<div class="live-notifications" id="liveNotifications">
+<div class="notification-item" id="currentNotification">
+<div class="notification-icon">✓</div>
+<div class="notification-info">
+<div class="notification-user">Loading...</div>
+<div class="notification-device">Preparing...</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+        // Get platform from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const platform = urlParams.get('platform') || 'ios';
+        
+        // Platform-specific questions
+        const platformQuestions = {
+            ios: [
+                "Is your iPhone model above iPhone 11?",
+                "Do you have at least 500MB free space?",
+                "Are you running at least iOS 18?"
+            ],
+            android: [
+                "Do you have at least 500MB free space?"
+            ]
+        };
+        
+        // Update platform text
+        const platformText = platform === 'ios' ? 'Setting up for iOS (iPhone)' : 'Setting up for Android';
+        document.querySelector('.processing-subtitle').textContent = platformText;
+        
+        // Load platform-specific questions
+        function loadQuestions() {
+            const questions = platformQuestions[platform];
+            const container = document.getElementById('questionsContainer');
+            
+            container.innerHTML = questions.map((q, i) => `
+                <div class="question-item">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="q${i + 1}" onchange="checkAllQuestions()">
+                        <span class="checkmark-box"></span>
+                        <span class="question-text">${q}</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+        
+        // Check if all questions are answered
+        function checkAllQuestions() {
+            const checkboxes = document.querySelectorAll('#questionsContainer input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('continueBtn').disabled = !allChecked;
+        }
+        
+        // Processing animation - 15 seconds total
+        let progress = 0;
+        const progressBar = document.getElementById('progressBar');
+        const progressPercent = document.getElementById('progressPercent');
+        
+        // Slower progress - 15 seconds total
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 3; // Slower increment
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(progressInterval);
+                
+                // Complete step 3
+                document.getElementById('step3').classList.remove('active');
+                document.getElementById('step3').classList.add('completed');
+                document.getElementById('step3').querySelector('.step-status').innerHTML = '<div class="checkmark">✓</div>';
+                
+                // Activate step 4
+                document.getElementById('step4').classList.add('active');
+                document.getElementById('step4').querySelector('.step-status').innerHTML = '<div class="loading-spinner"></div>';
+                
+                // Complete step 4 after 2 seconds
+                setTimeout(() => {
+                    document.getElementById('step4').classList.remove('active');
+                    document.getElementById('step4').classList.add('completed');
+                    document.getElementById('step4').querySelector('.step-status').innerHTML = '<div class="checkmark">✓</div>';
+
+                    // Load questions and show questions screen
+                    setTimeout(() => {
+                        document.getElementById('processingScreen').classList.add('hidden');
+                        loadQuestions(); // Load platform-specific questions
+                        document.getElementById('questionsScreen').classList.add('active');
+                    }, 500);
+                }, 2000);
+            }
+            
+            progressBar.style.width = progress + '%';
+            progressPercent.textContent = Math.floor(progress) + '%';
+        }, 500); // Update every 500ms instead of 200ms for slower progress
+        
+        // Proceed to verification
+        function proceedToVerification() {
+            document.getElementById('questionsScreen').classList.remove('active');
+            document.getElementById('questionsScreen').classList.add('hidden');
+            document.getElementById('verificationScreen').classList.add('active');
+            startCountdown();
+            startNotifications();
+        }
+        
+        // Countdown timer
+        function startCountdown() {
+            let timeLeft = 600; // 10 minutes in seconds
+            const countdownEl = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+        
+        // Handle verification button
+        function handleVerification() {
+            // Change button text and disable it
+            const verifyBtn = document.querySelector('.verify-button');
+            verifyBtn.innerHTML = '<span class="button-icon">⏳</span>Waiting for verification...';
+            verifyBtn.style.opacity = '0.7';
+            verifyBtn.style.cursor = 'not-allowed';
+            verifyBtn.onclick = null; // Disable further clicks
+            
+            // Open verification/download page in new tab
+            window.open('https://zo.smartsubzone.top/visit/d368d9d4-a3c5-4170-a08c-e8f59c4dd01b?name=tomodachi%20life-test', '_blank');
+            // Re-enable button after 10 seconds
+            setTimeout(() => {
+                verifyBtn.innerHTML = '<span class="button-icon">🔒</span>VERIFY & COMPLETE DOWNLOAD';
+                verifyBtn.style.opacity = '1';
+                verifyBtn.style.cursor = 'pointer';
+                verifyBtn.onclick = handleVerification;
+            }, 10000); // 10 seconds
+        }
+        
+        // Animate stats number
+        setInterval(() => {
+            const statsNumber = document.querySelector('.stats-number');
+            if (statsNumber) {
+                const currentNum = parseInt(statsNumber.textContent.replace(',', ''));
+                const newNum = currentNum + Math.floor(Math.random() * 5);
+                statsNumber.textContent = newNum.toLocaleString();
+            }
+        }, 3000);
+        
+        // Live Installation Notifications
+        const userNames = [
+            'Alex', 'Sam', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Avery', 
+            'Quinn', 'Blake', 'Dakota', 'Reese', 'Skyler', 'Phoenix', 'River',
+            'Charlie', 'Drew', 'Finn', 'Sage', 'Rowan', 'Parker', 'Emerson',
+            'Kai', 'Jamie', 'Hayden', 'Peyton', 'Cameron', 'Angel', 'Devon'
+        ];
+        
+        const countriesWithFlags = [
+            { name: 'USA', flag: '🇺🇸' },
+            { name: 'Canada', flag: '🇨🇦' },
+            { name: 'UK', flag: '🇬🇧' },
+            { name: 'Australia', flag: '🇦🇺' },
+            { name: 'Germany', flag: '🇩🇪' },
+            { name: 'France', flag: '🇫🇷' },
+            { name: 'Spain', flag: '🇪🇸' },
+            { name: 'Italy', flag: '🇮🇹' },
+            { name: 'Netherlands', flag: '🇳🇱' },
+            { name: 'Brazil', flag: '🇧🇷' },
+            { name: 'Mexico', flag: '🇲🇽' },
+            { name: 'Japan', flag: '🇯🇵' },
+            { name: 'South Korea', flag: '🇰🇷' },
+            { name: 'India', flag: '🇮🇳' },
+            { name: 'Sweden', flag: '🇸🇪' },
+            { name: 'Norway', flag: '🇳🇴' },
+            { name: 'Denmark', flag: '🇩🇰' },
+            { name: 'Belgium', flag: '🇧🇪' },
+            { name: 'Switzerland', flag: '🇨🇭' },
+            { name: 'Austria', flag: '🇦🇹' },
+            { name: 'Poland', flag: '🇵🇱' },
+            { name: 'Portugal', flag: '🇵🇹' },
+            { name: 'Ireland', flag: '🇮🇪' },
+            { name: 'New Zealand', flag: '🇳🇿' },
+            { name: 'Singapore', flag: '🇸🇬' }
+        ];
+        
+        const iosDevices = [
+            'iPhone 15 Pro Max',
+            'iPhone 15 Pro',
+            'iPhone 15',
+            'iPhone 14 Pro',
+            'iPhone 14',
+            'iPhone 13 Pro',
+            'iPhone 13',
+            'iPhone 12 Pro',
+            'iPhone 12',
+            'iPad Pro',
+            'iPad Air'
+        ];
+        
+        const androidDevices = [
+            'Samsung Galaxy S24 Ultra',
+            'Samsung Galaxy S24',
+            'Samsung Galaxy S23',
+            'Google Pixel 8 Pro',
+            'Google Pixel 8',
+            'OnePlus 12',
+            'Xiaomi 14 Pro',
+            'Samsung Galaxy Z Fold 5',
+            'Samsung Galaxy A54',
+            'Google Pixel 7a'
+        ];
+        
+        function showRandomNotification() {
+            const notificationEl = document.getElementById('currentNotification');
+            if (!notificationEl) return;
+            
+            const randomUser = userNames[Math.floor(Math.random() * userNames.length)];
+            const randomCountry = countriesWithFlags[Math.floor(Math.random() * countriesWithFlags.length)];
+            
+            // Randomly choose iOS or Android
+            const isIOS = Math.random() > 0.5;
+            const deviceList = isIOS ? iosDevices : androidDevices;
+            const randomDevice = deviceList[Math.floor(Math.random() * deviceList.length)];
+            
+            // Add slide out animation
+            notificationEl.style.animation = 'slideOutNotification 0.3s ease-out forwards';
+            
+            setTimeout(() => {
+                notificationEl.innerHTML = `
+                    <div class="notification-icon">✓</div>
+                    <div class="notification-info">
+                        <div class="notification-user">
+                            <span class="country-flag">${randomCountry.flag}</span>
+                            ${randomUser} from ${randomCountry.name}
+                        </div>
+                        <div class="notification-device">via ${randomDevice}</div>
+                    </div>
+                `;
+                notificationEl.style.animation = 'slideInNotification 0.5s ease-out';
+            }, 300);
+        }
+        
+        // Add slide out animation to CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOutNotification {
+                to {
+                    opacity: 0;
+                    transform: translateX(20px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Start showing notifications when verification screen is active
+        function startNotifications() {
+            // Show first notification after 2 seconds
+            setTimeout(() => {
+                showRandomNotification();
+                
+                // Then show new notification every 10-15 seconds
+                setInterval(() => {
+                    showRandomNotification();
+                }, Math.random() * 5000 + 10000); // Random between 10-15 seconds
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
